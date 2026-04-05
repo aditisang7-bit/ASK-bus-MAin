@@ -39,10 +39,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // InsForge uses getCurrentUser for initial state check
     const checkUser = async () => {
       try {
-        const { data: { user }, error } = await insforge.auth.getCurrentUser();
-        if (user) {
-          setUser(user);
-          setIsGuest(false);
+        // Try to get current user, if available
+        if (insforge.auth?.getUser && typeof insforge.auth.getUser === 'function') {
+          const user = await insforge.auth.getUser();
+          if (user) {
+            setUser(user);
+            setIsGuest(false);
+          }
         }
       } catch (err) {
         console.error("Auth check error:", err);
@@ -51,19 +54,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     };
     checkUser();
-
-    // InsForge auth state change monitoring
-    const { data: { subscription } } = insforge.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-        if (session?.user) setIsGuest(false);
-        setLoading(false);
-      }
-    );
-    
-    return () => {
-      subscription.unsubscribe();
-    };
   }, []);
 
   // Load user plan when user is set
