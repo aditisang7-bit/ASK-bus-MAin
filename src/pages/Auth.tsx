@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { insforge } from "@/integrations/insforge/client";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,7 +34,7 @@ const Auth = () => {
     setLoading(true);
     try {
       if (isLogin) {
-        const { error } = await insforge.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Welcome back!");
         const savedPlan = localStorage.getItem("checkout_plan");
@@ -47,7 +47,7 @@ const Auth = () => {
           navigate("/dashboard");
         }
       } else {
-        const { error } = await insforge.auth.signUp({ email, password });
+        const { error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
         toast.success("Account created! Check your email to verify.");
         const savedPlan = localStorage.getItem("checkout_plan");

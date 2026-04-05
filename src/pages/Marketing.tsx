@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Image, Download, Share2, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
-import { insforge } from "@/integrations/insforge/client";
+import { supabase } from "@/integrations/supabase/client";
 
 const platforms = [
   { value: "instagram-post", label: "Instagram Post (1080×1080)" },

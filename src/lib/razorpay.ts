@@ -5,7 +5,7 @@
 
 import type { UserPlan } from "@/lib/plans";
 import { PLANS, formatPrice } from "@/lib/plans";
-import { insforge } from "@/integrations/insforge/client";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface PaymentConfig {
   planId: UserPlan;

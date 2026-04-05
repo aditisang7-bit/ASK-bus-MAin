@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sparkles, Send, Loader2, Bot } from "lucide-react";
 import { toast } from "sonner";
-import { insforge } from "@/integrations/insforge/client";
+import { supabase } from "@/integrations/supabase/client";
 
 const AIStudio = () => {
   const { user, isGuest } = useAuth();

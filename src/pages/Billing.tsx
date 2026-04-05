@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { insforge } from "@/integrations/insforge/client";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { usePlan, PLAN_PRICES, PLAN_DISPLAY_NAMES, type PlanName } from "@/hooks/usePlan";
 import DashboardLayout from "@/components/DashboardLayout";

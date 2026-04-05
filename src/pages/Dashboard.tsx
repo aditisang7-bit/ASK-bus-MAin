@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { insforge } from "@/integrations/insforge/client";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { usePlan, PLAN_DISPLAY_NAMES } from "@/hooks/usePlan";
 import { Link } from "react-router-dom";
