@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import logo from "@/assets/logo.png";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { insforge } from "@/integrations/insforge/client";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
@@ -42,7 +42,7 @@ const DashboardLayout = ({ children, title, subtitle }: { children: React.ReactN
   const { data: isAdmin } = useQuery({
     queryKey: ["is-admin", user?.id],
     queryFn: async () => {
-      const { data } = await supabase.from("user_roles").select("role").eq("user_id", user!.id).eq("role", "admin").maybeSingle();
+      const { data } = await insforge.database.from("user_roles").select("role").eq("user_id", user!.id).eq("role", "admin").maybeSingle();
       return !!data;
     },
     enabled: !!user && !isGuest,

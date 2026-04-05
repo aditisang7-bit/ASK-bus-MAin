@@ -6,7 +6,7 @@ import { useAuth } from "./useAuth";
 import { useCallback, useState, useEffect } from "react";
 import type { UserPlan, FeatureType } from "@/lib/plans";
 import { PLANS, getLimit } from "@/lib/plans";
-import { supabase } from "@/integrations/supabase/client";
+import { insforge } from "@/integrations/insforge/client";
 
 interface UsageData {
   bookings: number;
@@ -62,11 +62,11 @@ export const usePlanAccess = () => {
 
     const loadUserPlan = async () => {
       try {
-        const { data, error } = await supabase
+        const { data, error } = await insforge.database
           .from("user_subscriptions")
           .select("plan, usage_data")
           .eq("user_id", user.id)
-          .single();
+          .maybeSingle(); // or single() if guaranteed, but maybeSingle() is safer with insforge sometimes unless you're sure it exists
 
         if (data) {
           setUserPlan((data.plan as UserPlan) || "free");
@@ -152,15 +152,15 @@ export const usePlanAccess = () => {
 
       // Persist to database
       try {
-        await supabase
+        await insforge.database
           .from("user_subscriptions")
-          .update({
+          .update([{
             usage_data: {
               ...usage,
               [featureType]: (usage[featureType as keyof UsageData] || 0) + count,
             },
             updated_at: new Date().toISOString(),
-          })
+          }])
           .eq("user_id", user.id);
       } catch (err) {
         console.error("Error updating usage:", err);
@@ -209,12 +209,12 @@ export const usePlanAccess = () => {
 
     if (user) {
       try {
-        await supabase
+        await insforge.database
           .from("user_subscriptions")
-          .update({
+          .update([{
             usage_data: emptyUsage,
             updated_at: new Date().toISOString(),
-          })
+          }])
           .eq("user_id", user.id);
       } catch (err) {
         console.error("Error resetting usage:", err);
@@ -230,12 +230,12 @@ export const usePlanAccess = () => {
       if (!user) return;
 
       try {
-        const { error } = await supabase
+        const { error } = await insforge.database
           .from("user_subscriptions")
-          .update({
+          .update([{
             plan: newPlan,
             updated_at: new Date().toISOString(),
-          })
+          }])
           .eq("user_id", user.id);
 
         if (!error) {

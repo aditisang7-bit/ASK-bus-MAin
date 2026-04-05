@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sparkles, Send, Loader2, Bot } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { insforge } from "@/integrations/insforge/client";
 
 const AIStudio = () => {
   const { user, isGuest } = useAuth();
@@ -29,7 +29,7 @@ const AIStudio = () => {
     setResponse("");
 
     try {
-      const { data, error } = await supabase.functions.invoke("ai-chat", {
+      const { data, error } = await insforge.functions.invoke("ai-chat", {
         body: { prompt, mode },
       });
       if (error) throw error;

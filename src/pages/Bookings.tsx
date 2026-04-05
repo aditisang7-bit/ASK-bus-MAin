@@ -39,7 +39,7 @@ const Bookings = () => {
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ["bookings"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("bookings").select("*").eq("user_id", user!.id).order("date", { ascending: true });
+      const { data, error } = await insforge.database.from("bookings").select("*").eq("user_id", user!.id).order("date", { ascending: true });
       if (error) throw error;
       return data as Booking[];
     },
@@ -49,18 +49,18 @@ const Bookings = () => {
   const upsert = useMutation({
     mutationFn: async () => {
       if (editing) {
-        const { error } = await supabase.from("bookings").update({
+        const { error } = await insforge.database.from("bookings").update([{
           customer_name: form.customer_name,
           service: form.service,
           date: form.date,
           time: form.time,
           status: form.status,
           notes: form.notes || null,
-        }).eq("id", editing.id);
+        }]).eq("id", editing.id);
         if (error) throw error;
       } else {
         if (!enforceLimit("bookings", "Bookings")) return;
-        const { error } = await supabase.from("bookings").insert({
+        const { error } = await insforge.database.from("bookings").insert([{
           user_id: user!.id,
           customer_name: form.customer_name,
           service: form.service,
@@ -68,7 +68,7 @@ const Bookings = () => {
           time: form.time,
           status: form.status,
           notes: form.notes || null,
-        });
+        }]);
         if (error) throw error;
         await incrementUsage("bookings");
       }

@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Image, Download, Share2, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { insforge } from "@/integrations/insforge/client";
 
 const platforms = [
   { value: "instagram-post", label: "Instagram Post (1080×1080)" },
@@ -48,7 +48,7 @@ const Marketing = () => {
 
     setGenerating(true);
     try {
-      const { data, error } = await supabase.functions.invoke("generate-banner", {
+      const { data, error } = await insforge.functions.invoke("generate-banner", {
         body: { platform, category, businessName, description, contact },
       });
 

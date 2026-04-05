@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { insforge } from "@/integrations/insforge/client";
 import { useAuth } from "@/hooks/useAuth";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,7 @@ const Reminders = () => {
     queryFn: async () => {
       const today = new Date().toISOString().split("T")[0];
       const nextWeek = addDays(new Date(), 7).toISOString().split("T")[0];
-      const { data, error } = await supabase
+      const { data, error } = await insforge.database
         .from("bookings")
         .select("*")
         .gte("date", today)
@@ -31,7 +31,7 @@ const Reminders = () => {
   const { data: pendingInvoices = [] } = useQuery({
     queryKey: ["pending-invoices"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await insforge.database
         .from("invoices")
         .select("*")
         .in("status", ["draft", "sent"])

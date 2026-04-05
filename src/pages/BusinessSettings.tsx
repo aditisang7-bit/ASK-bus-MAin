@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { insforge } from "@/integrations/insforge/client";
 import { useAuth } from "@/hooks/useAuth";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -31,7 +31,7 @@ const BusinessSettings = () => {
   const { data: profile, isLoading } = useQuery({
     queryKey: ["business-profile"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await insforge.database
         .from("business_profiles")
         .select("*")
         .eq("user_id", user!.id)
@@ -62,15 +62,15 @@ const BusinessSettings = () => {
   const save = useMutation({
     mutationFn: async () => {
       if (profile) {
-        const { error } = await supabase
+        const { error } = await insforge.database
           .from("business_profiles")
-          .update(form)
+          .update([form])
           .eq("user_id", user!.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase
+        const { error } = await insforge.database
           .from("business_profiles")
-          .insert({ ...form, user_id: user!.id });
+          .insert([{ ...form, user_id: user!.id }]);
         if (error) throw error;
       }
     },

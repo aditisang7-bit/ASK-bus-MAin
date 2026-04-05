@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { insforge } from "@/integrations/insforge/client";
 import { useAuth } from "@/hooks/useAuth";
 import { usePlan } from "@/hooks/usePlan";
 import DashboardLayout from "@/components/DashboardLayout";
@@ -30,7 +30,7 @@ const CRM = () => {
   const { data: customers = [], isLoading } = useQuery({
     queryKey: ["customers"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("customers").select("*").eq("user_id", user!.id).order("name");
+      const { data, error } = await insforge.database.from("customers").select("*").eq("user_id", user!.id).order("name");
       if (error) throw error;
       return data as Customer[];
     },
@@ -47,11 +47,11 @@ const CRM = () => {
     mutationFn: async () => {
       const payload = { name: form.name, email: form.email || null, phone: form.phone || null, notes: form.notes || null };
       if (editing) {
-        const { error } = await supabase.from("customers").update(payload).eq("id", editing.id);
+        const { error } = await insforge.database.from("customers").update([{ ...payload, user_id: user!.id }]).eq("id", editing.id);
         if (error) throw error;
       } else {
         if (!enforceLimit("customers", "Customers")) return;
-        const { error } = await supabase.from("customers").insert({ ...payload, user_id: user!.id });
+        const { error } = await insforge.database.from("customers").insert([{ ...payload, user_id: user!.id }]);
         if (error) throw error;
         await incrementUsage("customers");
       }
@@ -66,7 +66,7 @@ const CRM = () => {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("customers").delete().eq("id", id);
+      const { error } = await insforge.database.from("customers").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["customers"] }); toast.success("Customer deleted"); },

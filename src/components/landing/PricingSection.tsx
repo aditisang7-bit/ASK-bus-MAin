@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Check, Star, Loader2, Shield } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { insforge } from "@/integrations/insforge/client";
 import { toast } from "sonner";
 
 declare global {
@@ -88,8 +88,8 @@ const PricingSection = () => {
   const yearlySavings = Math.round((1 - (plans[1].price.yearly / (plans[1].price.monthly * 12))) * 100);
 
   const handleSubscribe = async (planKey: string) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
+    const { data: { user } } = await insforge.auth.getCurrentUser();
+    if (!user) {
       localStorage.setItem("checkout_plan", planKey);
       navigate("/auth?upgrade=true");
       return;
@@ -100,7 +100,7 @@ const PricingSection = () => {
       const loaded = await loadRazorpayScript();
       if (!loaded) throw new Error("Failed to load Razorpay");
 
-      const { data, error } = await supabase.functions.invoke("subscribe", {
+      const { data, error } = await insforge.functions.invoke("subscribe", {
         body: { plan: planKey, billing_cycle: isYearly ? "yearly" : "monthly" },
       });
       if (error) throw error;
@@ -115,7 +115,7 @@ const PricingSection = () => {
         theme: { color: "#6366f1" },
         handler: async (response: any) => {
           try {
-            const verifyRes = await supabase.functions.invoke("activate-subscription", {
+            const verifyRes = await insforge.functions.invoke("activate-subscription", {
               body: {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,

@@ -6,7 +6,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { insforge } from "@/integrations/insforge/client";
 import { toast } from "sonner";
 
 const features = [
@@ -95,21 +95,21 @@ const FeaturesSection = () => {
   const navigate = useNavigate();
 
   const handleNotify = async (featureId: string) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
+    const { data: { user } } = await insforge.auth.getCurrentUser();
+    if (!user) {
       navigate("/auth?redirect=/#features");
       return;
     }
 
     setLoadingFeature(featureId);
     try {
-      const { error } = await supabase.from("feature_requests").insert({
-        user_id: session.user.id,
+      const { error } = await insforge.database.from("feature_requests").insert([{
+        user_id: user.id,
         feature_name: featureId
-      });
+      }]);
       
-      // 23505 is PostgreSQL unique violation constraint
-      if (error && error.code !== "23505") throw error;
+      // P2002 is Prisma unique violation constraint used by InsForge
+      if (error && error.code !== "P2002") throw error;
       
       setNotified((prev) => [...prev, featureId]);
       toast.success("You’ll be notified when this feature is live 🚀");

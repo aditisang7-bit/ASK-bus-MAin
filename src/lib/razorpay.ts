@@ -5,7 +5,7 @@
 
 import type { UserPlan } from "@/lib/plans";
 import { PLANS, formatPrice } from "@/lib/plans";
-import { supabase } from "@/integrations/supabase/client";
+import { insforge } from "@/integrations/insforge/client";
 
 export interface PaymentConfig {
   planId: UserPlan;
@@ -44,7 +44,7 @@ export async function createRazorpayOrder(
   try {
     const plan = PLANS[planId];
 
-    const { data, error } = await supabase.functions.invoke(
+    const { data, error } = await insforge.functions.invoke(
       "razorpay-order",
       {
         body: {
@@ -78,7 +78,7 @@ export async function verifyPayment(
   userId: string
 ): Promise<boolean> {
   try {
-    const { data, error } = await supabase.functions.invoke(
+    const { data, error } = await insforge.functions.invoke(
       "razorpay-verify",
       {
         body: {

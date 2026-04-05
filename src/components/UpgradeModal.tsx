@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Crown, Loader2, Check, Star } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { insforge } from "@/integrations/insforge/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { PLAN_PRICES, type PlanName } from "@/hooks/usePlan";
@@ -57,7 +57,7 @@ const UpgradeModal = ({ open, onOpenChange, resource, current, max, currentPlan 
       const loaded = await loadRazorpayScript();
       if (!loaded) throw new Error("Failed to load Razorpay");
 
-      const { data, error } = await supabase.functions.invoke("subscribe", {
+      const { data, error } = await insforge.functions.invoke("subscribe", {
         body: { plan: planKey, billing_cycle: yearly ? "yearly" : "monthly" },
       });
       if (error) throw error;
@@ -72,7 +72,7 @@ const UpgradeModal = ({ open, onOpenChange, resource, current, max, currentPlan 
         theme: { color: "#6366f1" },
         handler: async (response: any) => {
           try {
-            const verifyRes = await supabase.functions.invoke("activate-subscription", {
+            const verifyRes = await insforge.functions.invoke("activate-subscription", {
               body: {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
