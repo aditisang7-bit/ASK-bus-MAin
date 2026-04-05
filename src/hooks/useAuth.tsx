@@ -1,5 +1,5 @@
 import { useEffect, useState, createContext, useContext } from "react";
-import { insforge } from "@/integrations/insforge/client";
+import { supabase } from "@/integrations/supabase/client";
 import type { UserPlan } from "@/lib/plans";
 
 type User = {
@@ -36,16 +36,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [userPlan, setUserPlan] = useState<UserPlan>("free");
 
   useEffect(() => {
-    // InsForge uses getCurrentUser for initial state check
+    // Check current session
     const checkUser = async () => {
       try {
-        // Try to get current user, if available
-        if (insforge.auth?.getUser && typeof insforge.auth.getUser === 'function') {
-          const user = await insforge.auth.getUser();
-          if (user) {
-            setUser(user);
-            setIsGuest(false);
-          }
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          setUser({
+            id: session.user.id,
+            email: session.user.email,
+          });
+          setIsGuest(false);
         }
       } catch (err) {
         console.error("Auth check error:", err);
@@ -54,6 +54,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     };
     checkUser();
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (session?.user) {
+          setUser({
+            id: session.user.id,
+            email: session.user.email,
+          });
+          setIsGuest(false);
+        } else {
+          setUser(null);
+        }
+        setLoading(false);
+      }
+    );
+    
+    return () => {
+      subscription?.unsubscribe();
+    };
   }, []);
 
   // Load user plan when user is set
@@ -70,8 +90,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const loadUserPlan = async () => {
       try {
-        // Migration tip: user_profiles table must exist in InsForge database
-        const { data, error } = await insforge.database
+        const { data, error } = await supabase
           .from("user_profiles")
           .select("subscription_plan")
           .eq("user_id", user.id)
@@ -92,7 +111,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [user, isGuest]);
 
   const signOut = async () => {
-    await insforge.auth.signOut();
+    await supabase.auth.signOut();
     setUser(null);
     setIsGuest(false);
     setUserPlan("free");
@@ -107,9 +126,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (!user) return false;
 
     try {
-      const { error } = await insforge.database
+      const { error } = await supabase
         .from("user_profiles")
-        .update([{ subscription_plan: newPlan }]) // Note: InsForge requires array format for updates too
+        .update({ subscription_plan: newPlan })
         .eq("user_id", user.id);
 
       if (!error) {

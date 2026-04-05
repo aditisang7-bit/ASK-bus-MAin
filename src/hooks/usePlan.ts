@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { insforge } from "@/integrations/insforge/client";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
@@ -85,7 +85,7 @@ export function usePlan() {
   const { data: subscription, isLoading: subLoading } = useQuery({
     queryKey: ["subscription", user?.id],
     queryFn: async () => {
-      const { data } = await insforge.database
+      const { data } = await supabase
         .from("subscriptions")
         .select("*")
         .eq("user_id", user!.id)
@@ -98,7 +98,7 @@ export function usePlan() {
   const { data: usageData, refetch: refetchUsage } = useQuery({
     queryKey: ["usage", user?.id],
     queryFn: async () => {
-      const { data } = await insforge.database
+      const { data } = await supabase
         .from("usage_tracking")
         .select("*")
         .eq("user_id", user!.id)
@@ -192,7 +192,7 @@ export function usePlan() {
       return;
     }
     if (!user) return;
-    await insforge.database.rpc("increment_usage", {
+    await supabase.rpc("increment_usage", {
       _user_id: user.id,
       _resource: resource,
     });
