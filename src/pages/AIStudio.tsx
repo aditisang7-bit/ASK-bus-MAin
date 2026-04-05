@@ -29,7 +29,7 @@ const AIStudio = () => {
     setResponse("");
 
     try {
-      const { data, error } = await insforge.functions.invoke("ai-chat", {
+      const { data, error } = await supabase.functions.invoke("ai-chat", {
         body: { prompt, mode },
       });
       if (error) throw error;
@@ -104,3 +104,4 @@ const AIStudio = () => {
 };
 
 export default AIStudio;
+

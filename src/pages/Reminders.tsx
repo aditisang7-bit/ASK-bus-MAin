@@ -16,7 +16,7 @@ const Reminders = () => {
     queryFn: async () => {
       const today = new Date().toISOString().split("T")[0];
       const nextWeek = addDays(new Date(), 7).toISOString().split("T")[0];
-      const { data, error } = await insforge.database
+      const { data, error } = await supabase
         .from("bookings")
         .select("*")
         .gte("date", today)
@@ -31,7 +31,7 @@ const Reminders = () => {
   const { data: pendingInvoices = [] } = useQuery({
     queryKey: ["pending-invoices"],
     queryFn: async () => {
-      const { data, error } = await insforge.database
+      const { data, error } = await supabase
         .from("invoices")
         .select("*")
         .in("status", ["draft", "sent"])
@@ -130,3 +130,5 @@ const Reminders = () => {
 };
 
 export default Reminders;
+
+

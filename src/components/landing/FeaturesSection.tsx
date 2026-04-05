@@ -95,7 +95,7 @@ const FeaturesSection = () => {
   const navigate = useNavigate();
 
   const handleNotify = async (featureId: string) => {
-    const { data: { user } } = await insforge.auth.getCurrentUser();
+    const { data: { user } } = await supabase.auth.getCurrentUser();
     if (!user) {
       navigate("/auth?redirect=/#features");
       return;
@@ -103,7 +103,7 @@ const FeaturesSection = () => {
 
     setLoadingFeature(featureId);
     try {
-      const { error } = await insforge.database.from("feature_requests").insert([{
+      const { error } = await supabase.from("feature_requests").insert([{
         user_id: user.id,
         feature_name: featureId
       }]);
@@ -229,3 +229,4 @@ const FeaturesSection = () => {
 };
 
 export default FeaturesSection;
+

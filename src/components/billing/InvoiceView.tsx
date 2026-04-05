@@ -51,7 +51,7 @@ const InvoiceView = ({ invoice, items, onPaymentSuccess }: InvoiceViewProps) => 
   const { data: profile } = useQuery({
     queryKey: ["business-profile"],
     queryFn: async () => {
-      const { data } = await insforge.database.from("business_profiles").select("*").eq("user_id", user!.id).maybeSingle();
+      const { data } = await supabase.from("business_profiles").select("*").eq("user_id", user!.id).maybeSingle();
       return data;
     },
     enabled: !!user,
@@ -74,10 +74,10 @@ const InvoiceView = ({ invoice, items, onPaymentSuccess }: InvoiceViewProps) => 
       const loaded = await loadRazorpayScript();
       if (!loaded) throw new Error("Failed to load Razorpay SDK");
 
-      const { data: userAuth } = await insforge.auth.getCurrentUser();
+      const { data: userAuth } = await supabase.auth.getCurrentUser();
       const token = userAuth?.user?.id; // Or whatever token is needed, but typically getCurrentUser handles it.
 
-      const res = await insforge.functions.invoke("razorpay-order", {
+      const res = await supabase.functions.invoke("razorpay-order", {
         body: {
           invoice_id: invoice.id,
           amount: Number(invoice.total),
@@ -103,7 +103,7 @@ const InvoiceView = ({ invoice, items, onPaymentSuccess }: InvoiceViewProps) => 
         theme: { color: "#6366f1" },
         handler: async (response: any) => {
           try {
-            const verifyRes = await insforge.functions.invoke("razorpay-verify", {
+            const verifyRes = await supabase.functions.invoke("razorpay-verify", {
               body: {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
@@ -274,3 +274,4 @@ const InvoiceView = ({ invoice, items, onPaymentSuccess }: InvoiceViewProps) => 
 };
 
 export default InvoiceView;
+

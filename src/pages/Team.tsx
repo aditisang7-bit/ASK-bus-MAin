@@ -29,7 +29,7 @@ const Team = () => {
   const { data: employees = [], isLoading } = useQuery({
     queryKey: ["employees"],
     queryFn: async () => {
-      const { data, error } = await insforge.database.from("employees").select("*").order("name");
+      const { data, error } = await supabase.from("employees").select("*").order("name");
       if (error) throw error;
       return data as Employee[];
     },
@@ -40,11 +40,11 @@ const Team = () => {
     mutationFn: async () => {
       const payload = { name: form.name, email: form.email || null, phone: form.phone || null, role: form.role, department: form.department || null, status: form.status, joined_date: form.joined_date };
       if (editing) {
-        const { error } = await insforge.database.from("employees").update([{ ...payload, user_id: user!.id }]).eq("id", editing.id);
+        const { error } = await supabase.from("employees").update([{ ...payload, user_id: user!.id }]).eq("id", editing.id);
         if (error) throw error;
       } else {
         if (!enforceLimit("team", "Team members")) return;
-        const { error } = await insforge.database.from("employees").insert([{ ...payload, user_id: user!.id }]);
+        const { error } = await supabase.from("employees").insert([{ ...payload, user_id: user!.id }]);
         if (error) throw error;
         await incrementUsage("team");
       }
@@ -59,7 +59,7 @@ const Team = () => {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await insforge.database.from("employees").delete().eq("id", id);
+      const { error } = await supabase.from("employees").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["employees"] }); toast.success("Employee removed"); },
@@ -174,3 +174,4 @@ const Team = () => {
 };
 
 export default Team;
+

@@ -61,3 +61,4 @@ export function PlanBadge({ plan, size = "md" }: PlanBadgeProps) {
     </Badge>
   );
 }
+

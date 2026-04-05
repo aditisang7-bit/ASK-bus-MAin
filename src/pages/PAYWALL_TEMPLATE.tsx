@@ -287,3 +287,4 @@ To check if user has a feature:
 - Branding: only "pro"
 - Unlimited bookings: "growth" and "pro"
 */
+

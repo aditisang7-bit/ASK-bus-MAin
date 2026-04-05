@@ -39,3 +39,4 @@ const TrialBanner = ({ daysRemaining, isExpired }: Props) => {
 };
 
 export default TrialBanner;
+

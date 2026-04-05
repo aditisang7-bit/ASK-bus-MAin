@@ -31,7 +31,7 @@ const BusinessSettings = () => {
   const { data: profile, isLoading } = useQuery({
     queryKey: ["business-profile"],
     queryFn: async () => {
-      const { data, error } = await insforge.database
+      const { data, error } = await supabase
         .from("business_profiles")
         .select("*")
         .eq("user_id", user!.id)
@@ -62,13 +62,13 @@ const BusinessSettings = () => {
   const save = useMutation({
     mutationFn: async () => {
       if (profile) {
-        const { error } = await insforge.database
+        const { error } = await supabase
           .from("business_profiles")
           .update([form])
           .eq("user_id", user!.id);
         if (error) throw error;
       } else {
-        const { error } = await insforge.database
+        const { error } = await supabase
           .from("business_profiles")
           .insert([{ ...form, user_id: user!.id }]);
         if (error) throw error;
@@ -193,3 +193,5 @@ const BusinessSettings = () => {
 };
 
 export default BusinessSettings;
+
+

@@ -88,7 +88,7 @@ const PricingSection = () => {
   const yearlySavings = Math.round((1 - (plans[1].price.yearly / (plans[1].price.monthly * 12))) * 100);
 
   const handleSubscribe = async (planKey: string) => {
-    const { data: { user } } = await insforge.auth.getCurrentUser();
+    const { data: { user } } = await supabase.auth.getCurrentUser();
     if (!user) {
       localStorage.setItem("checkout_plan", planKey);
       navigate("/auth?upgrade=true");
@@ -100,7 +100,7 @@ const PricingSection = () => {
       const loaded = await loadRazorpayScript();
       if (!loaded) throw new Error("Failed to load Razorpay");
 
-      const { data, error } = await insforge.functions.invoke("subscribe", {
+      const { data, error } = await supabase.functions.invoke("subscribe", {
         body: { plan: planKey, billing_cycle: isYearly ? "yearly" : "monthly" },
       });
       if (error) throw error;
@@ -115,7 +115,7 @@ const PricingSection = () => {
         theme: { color: "#6366f1" },
         handler: async (response: any) => {
           try {
-            const verifyRes = await insforge.functions.invoke("activate-subscription", {
+            const verifyRes = await supabase.functions.invoke("activate-subscription", {
               body: {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
@@ -277,3 +277,4 @@ const PricingSection = () => {
 };
 
 export default PricingSection;
+

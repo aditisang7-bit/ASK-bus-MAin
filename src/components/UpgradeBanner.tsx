@@ -57,3 +57,4 @@ const UpgradeBanner = ({ resource, current, max, plan }: UpgradeBannerProps) => 
 };
 
 export default UpgradeBanner;
+

@@ -48,7 +48,7 @@ const Marketing = () => {
 
     setGenerating(true);
     try {
-      const { data, error } = await insforge.functions.invoke("generate-banner", {
+      const { data, error } = await supabase.functions.invoke("generate-banner", {
         body: { platform, category, businessName, description, contact },
       });
 
@@ -181,3 +181,4 @@ const Marketing = () => {
 };
 
 export default Marketing;
+

@@ -42,7 +42,7 @@ const DashboardLayout = ({ children, title, subtitle }: { children: React.ReactN
   const { data: isAdmin } = useQuery({
     queryKey: ["is-admin", user?.id],
     queryFn: async () => {
-      const { data } = await insforge.database.from("user_roles").select("role").eq("user_id", user!.id).eq("role", "admin").maybeSingle();
+      const { data } = await supabase.from("user_roles").select("role").eq("user_id", user!.id).eq("role", "admin").maybeSingle();
       return !!data;
     },
     enabled: !!user && !isGuest,
@@ -215,3 +215,4 @@ const DashboardLayout = ({ children, title, subtitle }: { children: React.ReactN
 };
 
 export default DashboardLayout;
+

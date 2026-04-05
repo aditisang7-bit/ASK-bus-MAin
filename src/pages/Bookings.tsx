@@ -39,7 +39,7 @@ const Bookings = () => {
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ["bookings"],
     queryFn: async () => {
-      const { data, error } = await insforge.database.from("bookings").select("*").eq("user_id", user!.id).order("date", { ascending: true });
+      const { data, error } = await supabase.from("bookings").select("*").eq("user_id", user!.id).order("date", { ascending: true });
       if (error) throw error;
       return data as Booking[];
     },
@@ -49,7 +49,7 @@ const Bookings = () => {
   const upsert = useMutation({
     mutationFn: async () => {
       if (editing) {
-        const { error } = await insforge.database.from("bookings").update([{
+        const { error } = await supabase.from("bookings").update([{
           customer_name: form.customer_name,
           service: form.service,
           date: form.date,
@@ -60,7 +60,7 @@ const Bookings = () => {
         if (error) throw error;
       } else {
         if (!enforceLimit("bookings", "Bookings")) return;
-        const { error } = await insforge.database.from("bookings").insert([{
+        const { error } = await supabase.from("bookings").insert([{
           user_id: user!.id,
           customer_name: form.customer_name,
           service: form.service,
@@ -85,7 +85,7 @@ const Bookings = () => {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await insforge.database.from("bookings").delete().eq("id", id);
+      const { error } = await supabase.from("bookings").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -212,3 +212,4 @@ const Bookings = () => {
 };
 
 export default Bookings;
+

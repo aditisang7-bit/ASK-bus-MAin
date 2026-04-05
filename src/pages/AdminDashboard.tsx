@@ -28,7 +28,7 @@ const AdminDashboard = () => {
   const { data: isAdmin } = useQuery({
     queryKey: ["is-admin", user?.id],
     queryFn: async () => {
-      const { data } = await insforge.database.from("user_roles").select("role").eq("user_id", user!.id).eq("role", "admin").maybeSingle();
+      const { data } = await supabase.from("user_roles").select("role").eq("user_id", user!.id).eq("role", "admin").maybeSingle();
       return !!data;
     },
     enabled: !!user,
@@ -37,7 +37,7 @@ const AdminDashboard = () => {
   const { data: stats } = useQuery({
     queryKey: ["admin-stats"],
     queryFn: async () => {
-      const { data, error } = await insforge.functions.invoke("admin-stats");
+      const { data, error } = await supabase.functions.invoke("admin-stats");
       if (error) throw error;
       return data;
     },
@@ -47,7 +47,7 @@ const AdminDashboard = () => {
   const { data: messages = [] } = useQuery({
     queryKey: ["admin-messages"],
     queryFn: async () => {
-      const { data } = await insforge.database.from("admin_messages").select("*").order("created_at", { ascending: false }).limit(50);
+      const { data } = await supabase.from("admin_messages").select("*").order("created_at", { ascending: false }).limit(50);
       return data || [];
     },
     enabled: !!isAdmin,
@@ -56,7 +56,7 @@ const AdminDashboard = () => {
   const { data: coupons = [] } = useQuery({
     queryKey: ["coupons"],
     queryFn: async () => {
-      const { data } = await insforge.database.from("coupons").select("*").order("created_at", { ascending: false });
+      const { data } = await supabase.from("coupons").select("*").order("created_at", { ascending: false });
       return data || [];
     },
     enabled: !!isAdmin,
@@ -65,7 +65,7 @@ const AdminDashboard = () => {
   const { data: paymentLogs = [], refetch: refetchLogs } = useQuery({
     queryKey: ["payment-logs", logFilter],
     queryFn: async () => {
-      let q = insforge.database.from("payment_logs").select("*").order("created_at", { ascending: false }).limit(50);
+      let q = supabase.from("payment_logs").select("*").order("created_at", { ascending: false }).limit(50);
       if (logFilter !== "all") q = q.eq("type", logFilter);
       const { data } = await q;
       return data || [];
@@ -76,7 +76,7 @@ const AdminDashboard = () => {
   const testPayment = useMutation({
     mutationFn: async () => {
       setTestResult(null);
-      const { data, error } = await insforge.functions.invoke("razorpay-test-payment");
+      const { data, error } = await supabase.functions.invoke("razorpay-test-payment");
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
 
@@ -90,7 +90,7 @@ const AdminDashboard = () => {
           order_id: data.order_id,
           handler: async (response: any) => {
             try {
-              const { data: verifyData, error: verifyError } = await insforge.functions.invoke("razorpay-verify", {
+              const { data: verifyData, error: verifyError } = await supabase.functions.invoke("razorpay-verify", {
                 body: {
                   razorpay_order_id: response.razorpay_order_id,
                   razorpay_payment_id: response.razorpay_payment_id,
@@ -129,7 +129,7 @@ const AdminDashboard = () => {
 
   const sendMessage = useMutation({
     mutationFn: async () => {
-      const { error } = await insforge.database.from("admin_messages").insert([{
+      const { error } = await supabase.from("admin_messages").insert([{
         title: msgForm.title,
         message: msgForm.message,
         target_audience: msgForm.target_audience,
@@ -147,7 +147,7 @@ const AdminDashboard = () => {
 
   const createCoupon = useMutation({
     mutationFn: async () => {
-      const { error } = await insforge.database.from("coupons").insert([{
+      const { error } = await supabase.from("coupons").insert([{
         code: couponForm.code.toUpperCase(),
         discount_type: couponForm.discount_type,
         value: couponForm.value,
@@ -450,3 +450,4 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
+

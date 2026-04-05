@@ -66,3 +66,4 @@ const SignupModal = ({ open, onOpenChange, guestUsageCount }: Props) => {
 };
 
 export default SignupModal;
+

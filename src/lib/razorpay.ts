@@ -44,7 +44,7 @@ export async function createRazorpayOrder(
   try {
     const plan = PLANS[planId];
 
-    const { data, error } = await insforge.functions.invoke(
+    const { data, error } = await supabase.functions.invoke(
       "razorpay-order",
       {
         body: {
@@ -78,7 +78,7 @@ export async function verifyPayment(
   userId: string
 ): Promise<boolean> {
   try {
-    const { data, error } = await insforge.functions.invoke(
+    const { data, error } = await supabase.functions.invoke(
       "razorpay-verify",
       {
         body: {
@@ -188,3 +188,4 @@ export function calculateSavings(planId: UserPlan) {
 
   return null;
 }
+

@@ -24,7 +24,7 @@ const Inventory = () => {
   const { data: items = [], isLoading } = useQuery({
     queryKey: ["inventory"],
     queryFn: async () => {
-      const { data, error } = await insforge.database.from("inventory").select("*").eq("user_id", user!.id).order("name");
+      const { data, error } = await supabase.from("inventory").select("*").eq("user_id", user!.id).order("name");
       if (error) throw error;
       return data as Item[];
     },
@@ -35,10 +35,10 @@ const Inventory = () => {
     mutationFn: async () => {
       const payload = { name: form.name, quantity: form.quantity, price: form.price, description: form.description || null, low_stock_threshold: form.low_stock_threshold };
       if (editing) {
-        const { error } = await insforge.database.from("inventory").update([{ ...payload, user_id: user!.id }]).eq("id", editing.id);
+        const { error } = await supabase.from("inventory").update([{ ...payload, user_id: user!.id }]).eq("id", editing.id);
         if (error) throw error;
       } else {
-        const { error } = await insforge.database.from("inventory").insert([{ ...payload, user_id: user!.id }]);
+        const { error } = await supabase.from("inventory").insert([{ ...payload, user_id: user!.id }]);
         if (error) throw error;
       }
     },
@@ -52,7 +52,7 @@ const Inventory = () => {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await insforge.database.from("inventory").delete().eq("id", id);
+      const { error } = await supabase.from("inventory").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["inventory"] }); toast.success("Item deleted"); },
@@ -151,3 +151,4 @@ const Inventory = () => {
 };
 
 export default Inventory;
+

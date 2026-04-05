@@ -263,3 +263,4 @@ export function formatPrice(price: number): string {
 export function getPlanDisplayName(plan: UserPlan): string {
   return PLANS[plan].name;
 }
+

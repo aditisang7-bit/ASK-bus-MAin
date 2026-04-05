@@ -78,7 +78,7 @@ const Billing = () => {
   const { data: invoices = [], isLoading } = useQuery({
     queryKey: ["invoices"],
     queryFn: async () => {
-      const { data, error } = await insforge.database.from("invoices").select("*").eq("user_id", user!.id).order("created_at", { ascending: false });
+      const { data, error } = await supabase.from("invoices").select("*").eq("user_id", user!.id).order("created_at", { ascending: false });
       if (error) throw error;
       return data;
     },
@@ -109,7 +109,7 @@ const Billing = () => {
 
   const create = useMutation({
     mutationFn: async () => {
-      const { data: invoice, error } = await insforge.database.from("invoices").insert([{
+      const { data: invoice, error } = await supabase.from("invoices").insert([{
         user_id: user!.id, customer_name: form.customer_name,
         invoice_number: form.invoice_number || `INV-${Date.now()}`,
         status: form.status, subtotal, tax_rate: form.tax_rate, tax_amount: taxAmount, total,
@@ -122,7 +122,7 @@ const Billing = () => {
         unit_price: i.unit_price, total: i.quantity * i.unit_price,
       }));
       if (items.length > 0) {
-        const { error: ie } = await insforge.database.from("invoice_items").insert(items);
+        const { error: ie } = await supabase.from("invoice_items").insert(items);
         if (ie) throw ie;
       }
     },
@@ -137,7 +137,7 @@ const Billing = () => {
 
   const updateStatus = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const { error } = await insforge.database.from("invoices").update([{ status }]).eq("id", id);
+      const { error } = await supabase.from("invoices").update([{ status }]).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -149,7 +149,7 @@ const Billing = () => {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await insforge.database.from("invoices").delete().eq("id", id);
+      const { error } = await supabase.from("invoices").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -160,7 +160,7 @@ const Billing = () => {
   });
 
   const openInvoiceView = async (inv: any) => {
-    const { data } = await insforge.database.from("invoice_items").select("*").eq("invoice_id", inv.id);
+    const { data } = await supabase.from("invoice_items").select("*").eq("invoice_id", inv.id);
     setViewItems(data || []);
     setViewInvoice(inv);
   };
@@ -181,7 +181,7 @@ const Billing = () => {
       const loaded = await loadRazorpayScript();
       if (!loaded) throw new Error("Failed to load Razorpay");
 
-      const { data, error } = await insforge.functions.invoke("subscribe", {
+      const { data, error } = await supabase.functions.invoke("subscribe", {
         body: { plan: planKey, billing_cycle: upgradeYearly ? "yearly" : "monthly" },
       });
       if (error) throw error;
@@ -196,7 +196,7 @@ const Billing = () => {
         theme: { color: "#6366f1" },
         handler: async (response: any) => {
           try {
-            const verifyRes = await insforge.functions.invoke("activate-subscription", {
+            const verifyRes = await supabase.functions.invoke("activate-subscription", {
               body: {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
@@ -590,7 +590,7 @@ const PaymentHistory = ({ userId }: { userId?: string }) => {
   const { data: payments = [], isLoading } = useQuery({
     queryKey: ["payment-history", userId],
     queryFn: async () => {
-      const { data, error } = await insforge.database.from("payments").select("*").eq("user_id", userId).order("created_at", { ascending: false }).limit(50);
+      const { data, error } = await supabase.from("payments").select("*").eq("user_id", userId).order("created_at", { ascending: false }).limit(50);
       if (error) throw error;
       return data;
     },
@@ -633,3 +633,4 @@ const PaymentHistory = ({ userId }: { userId?: string }) => {
 };
 
 export default Billing;
+

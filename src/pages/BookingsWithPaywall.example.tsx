@@ -377,3 +377,4 @@ export const BookingsPageWithPaywall = () => {
     </DashboardLayout>
   );
 };
+
