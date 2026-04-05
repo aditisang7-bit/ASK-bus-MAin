@@ -24,8 +24,17 @@ const Dashboard = () => {
   const { data: bookingCount = 0 } = useQuery({
     queryKey: ["bookings-count"],
     queryFn: async () => {
-      const { count } = await supabase.from("bookings").select("*", { count: "exact", head: true });
-      return count || 0;
+      try {
+        const { count, error } = await supabase.from("bookings").select("*", { count: "exact", head: true });
+        if (error) {
+          console.warn("Bookings query error:", error);
+          return 0;
+        }
+        return count || 0;
+      } catch (err) {
+        console.warn("Bookings fetch failed:", err);
+        return 0;
+      }
     },
     enabled: !!user,
   });
@@ -33,8 +42,17 @@ const Dashboard = () => {
   const { data: customerCount = 0 } = useQuery({
     queryKey: ["customers-count"],
     queryFn: async () => {
-      const { count } = await supabase.from("customers").select("*", { count: "exact", head: true });
-      return count || 0;
+      try {
+        const { count, error } = await supabase.from("customers").select("*", { count: "exact", head: true });
+        if (error) {
+          console.warn("Customers query error:", error);
+          return 0;
+        }
+        return count || 0;
+      } catch (err) {
+        console.warn("Customers fetch failed:", err);
+        return 0;
+      }
     },
     enabled: !!user,
   });
@@ -42,8 +60,17 @@ const Dashboard = () => {
   const { data: invoiceCount = 0 } = useQuery({
     queryKey: ["invoices-count"],
     queryFn: async () => {
-      const { count } = await supabase.from("invoices").select("*", { count: "exact", head: true });
-      return count || 0;
+      try {
+        const { count, error } = await supabase.from("invoices").select("*", { count: "exact", head: true });
+        if (error) {
+          console.warn("Invoices query error:", error);
+          return 0;
+        }
+        return count || 0;
+      } catch (err) {
+        console.warn("Invoices fetch failed:", err);
+        return 0;
+      }
     },
     enabled: !!user,
   });
@@ -51,8 +78,17 @@ const Dashboard = () => {
   const { data: totalRevenue = 0 } = useQuery({
     queryKey: ["total-revenue"],
     queryFn: async () => {
-      const { data } = await supabase.from("invoices").select("total").eq("status", "paid");
-      return data?.reduce((sum, inv) => sum + Number(inv.total), 0) || 0;
+      try {
+        const { data, error } = await supabase.from("invoices").select("total").eq("status", "paid");
+        if (error) {
+          console.warn("Revenue query error:", error);
+          return 0;
+        }
+        return data?.reduce((sum, inv) => sum + Number(inv.total), 0) || 0;
+      } catch (err) {
+        console.warn("Revenue fetch failed:", err);
+        return 0;
+      }
     },
     enabled: !!user,
   });
@@ -60,8 +96,17 @@ const Dashboard = () => {
   const { data: itemCount = 0 } = useQuery({
     queryKey: ["inventory-count"],
     queryFn: async () => {
-      const { count } = await supabase.from("inventory").select("*", { count: "exact", head: true });
-      return count || 0;
+      try {
+        const { count, error } = await supabase.from("inventory").select("*", { count: "exact", head: true });
+        if (error) {
+          console.warn("Inventory query error:", error);
+          return 0;
+        }
+        return count || 0;
+      } catch (err) {
+        console.warn("Inventory fetch failed:", err);
+        return 0;
+      }
     },
     enabled: !!user,
   });
