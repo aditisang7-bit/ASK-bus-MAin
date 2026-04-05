@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { insforge } from "@/integrations/insforge/client";
 import { useAuth } from "@/hooks/useAuth";
 import { usePlan, PLAN_DISPLAY_NAMES } from "@/hooks/usePlan";
 import { Link } from "react-router-dom";
@@ -24,7 +24,7 @@ const Dashboard = () => {
   const { data: bookingCount = 0 } = useQuery({
     queryKey: ["bookings-count"],
     queryFn: async () => {
-      const { count } = await supabase.from("bookings").select("*", { count: "exact", head: true });
+      const { count } = await insforge.database.from("bookings").select("*", { count: "exact", head: true });
       return count || 0;
     },
     enabled: !!user,
@@ -33,7 +33,7 @@ const Dashboard = () => {
   const { data: customerCount = 0 } = useQuery({
     queryKey: ["customers-count"],
     queryFn: async () => {
-      const { count } = await supabase.from("customers").select("*", { count: "exact", head: true });
+      const { count } = await insforge.database.from("customers").select("*", { count: "exact", head: true });
       return count || 0;
     },
     enabled: !!user,
@@ -42,7 +42,7 @@ const Dashboard = () => {
   const { data: invoiceCount = 0 } = useQuery({
     queryKey: ["invoices-count"],
     queryFn: async () => {
-      const { count } = await supabase.from("invoices").select("*", { count: "exact", head: true });
+      const { count } = await insforge.database.from("invoices").select("*", { count: "exact", head: true });
       return count || 0;
     },
     enabled: !!user,
@@ -51,7 +51,7 @@ const Dashboard = () => {
   const { data: totalRevenue = 0 } = useQuery({
     queryKey: ["total-revenue"],
     queryFn: async () => {
-      const { data } = await supabase.from("invoices").select("total").eq("status", "paid");
+      const { data } = await insforge.database.from("invoices").select("total").eq("status", "paid");
       return data?.reduce((sum, inv) => sum + Number(inv.total), 0) || 0;
     },
     enabled: !!user,
@@ -60,7 +60,7 @@ const Dashboard = () => {
   const { data: itemCount = 0 } = useQuery({
     queryKey: ["inventory-count"],
     queryFn: async () => {
-      const { count } = await supabase.from("inventory").select("*", { count: "exact", head: true });
+      const { count } = await insforge.database.from("inventory").select("*", { count: "exact", head: true });
       return count || 0;
     },
     enabled: !!user,

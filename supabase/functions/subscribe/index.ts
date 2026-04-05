@@ -53,10 +53,13 @@ Deno.serve(async (req) => {
     const cycle = billing_cycle === "yearly" ? "yearly" : "monthly";
     const amount = PLAN_PRICES[plan][cycle];
 
-    const RAZORPAY_KEY_ID = Deno.env.get("RAZORPAY_KEY_ID");
-    const RAZORPAY_KEY_SECRET = Deno.env.get("RAZORPAY_KEY_SECRET");
+    const RAZORPAY_KEY_ID = Deno.env.get("RAZORPAY_KEY_ID") || Deno.env.get("key_id");
+    const RAZORPAY_KEY_SECRET = Deno.env.get("RAZORPAY_KEY_SECRET") || Deno.env.get("key_secret");
+
+    console.log(`Processing subscription: plan=${plan}, cycle=${cycle}, amount=${amount}`);
 
     if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
+      console.error("Razorpay keys not configured. Checked: RAZORPAY_KEY_ID, key_id");
       return new Response(
         JSON.stringify({ error: "Razorpay keys not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }

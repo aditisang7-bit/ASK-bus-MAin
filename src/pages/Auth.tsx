@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { insforge } from "@/integrations/insforge/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,7 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { enterGuestMode, user } = useAuth();
+  const { user } = useAuth();
 
   const upgradeIntent = searchParams.get("upgrade") === "true";
   const redirectTo = searchParams.get("redirect");
@@ -34,7 +34,7 @@ const Auth = () => {
     setLoading(true);
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await insforge.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Welcome back!");
         const savedPlan = localStorage.getItem("checkout_plan");
@@ -47,7 +47,7 @@ const Auth = () => {
           navigate("/dashboard");
         }
       } else {
-        const { error } = await supabase.auth.signUp({ email, password });
+        const { error } = await insforge.auth.signUp({ email, password });
         if (error) throw error;
         toast.success("Account created! Check your email to verify.");
         const savedPlan = localStorage.getItem("checkout_plan");

@@ -53,8 +53,9 @@ Deno.serve(async (req) => {
       });
     }
 
-    const RAZORPAY_KEY_SECRET = Deno.env.get("RAZORPAY_KEY_SECRET");
+    const RAZORPAY_KEY_SECRET = Deno.env.get("RAZORPAY_KEY_SECRET") || Deno.env.get("key_secret");
     if (!RAZORPAY_KEY_SECRET) {
+      console.error("Razorpay secret not configured. Checked: RAZORPAY_KEY_SECRET, key_secret");
       return new Response(JSON.stringify({ error: "Razorpay secret not configured" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

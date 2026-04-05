@@ -53,9 +53,9 @@ const PLAN_LIMITS: Record<PlanName, PlanLimits> = {
 };
 
 export const PLAN_PRICES: Record<string, Record<string, number>> = {
-  starter: { monthly: 699, yearly: 6990 },
-  growth: { monthly: 999, yearly: 9990 },
-  pro: { monthly: 2999, yearly: 29990 },
+  starter: { monthly: 299, yearly: 2999 },
+  growth: { monthly: 999, yearly: 9999 },
+  pro: { monthly: 2499, yearly: 24999 },
 };
 
 export const PLAN_DISPLAY_NAMES: Record<PlanName, string> = {

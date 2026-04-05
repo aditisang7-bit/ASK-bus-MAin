@@ -16,7 +16,7 @@ const plans = [
   {
     name: "Starter",
     key: "starter",
-    price: { monthly: 699, yearly: 6990 }, // Keep yearly realistic or derived as per ui
+    price: { monthly: 299, yearly: 2999 }, // Keep yearly realistic or derived as per ui
     description: "For small shops & local businesses",
     features: [
       "200 bookings/month",
@@ -35,7 +35,7 @@ const plans = [
   {
     name: "Growth",
     key: "growth",
-    price: { monthly: 999, yearly: 9990 },
+    price: { monthly: 999, yearly: 9999 },
     description: "For growing businesses",
     features: [
       "1000 bookings/month",
@@ -54,7 +54,7 @@ const plans = [
   {
     name: "Pro",
     key: "pro",
-    price: { monthly: 2999, yearly: 29990 },
+    price: { monthly: 2499, yearly: 24999 },
     description: "For serious businesses & teams",
     features: [
       "Email sending",

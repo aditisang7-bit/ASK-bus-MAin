@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { insforge } from "@/integrations/insforge/client";
 import { useAuth } from "@/hooks/useAuth";
 import { usePlan } from "@/hooks/usePlan";
 import DashboardLayout from "@/components/DashboardLayout";
@@ -85,7 +85,7 @@ const Bookings = () => {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("bookings").delete().eq("id", id);
+      const { error } = await insforge.database.from("bookings").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
